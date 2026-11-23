@@ -83,7 +83,7 @@ router.get('/attestations', asyncRoute(async (req, res) => {
      WHERE d.etudiant_id = ? AND d.etat = 'validé' ORDER BY d.updated_at DESC`,
     [req.session.user.id]
   );
-  res.render('student/attestations', { title: 'Mes attestations', dossiers });
+  res.render('student/attestations', { title: 'Mes attestations', dossiers, types: TYPES_PIECES });
 }));
 
 router.get('/piece/nouveau', asyncRoute(async (req, res) => {

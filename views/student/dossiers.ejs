@@ -44,7 +44,7 @@
   <div class="table-card">
     <table>
       <thead>
-        <tr><th>N°</th><th>Filière</th><th>Niveau</th><th>Dépôt</th><th>Pièces</th><th>État</th><th>Actions</th></tr>
+        <tr><th>N°</th><th>Filière</th><th>Niveau</th><th>Dépôt</th><th>Complétude</th><th>État</th><th>Actions</th></tr>
       </thead>
       <tbody>
         <% if (!dossiers.length) { %>
@@ -56,7 +56,10 @@
             <td><%= dossier.filiere %></td>
             <td><%= dossier.niveau %></td>
             <td><%= formatDate(dossier.created_at) %></td>
-            <td><%= dossier.nb_pieces %></td>
+            <td>
+              <div class="table-progress"><span style="width:<%= Math.min(100, dossier.nb_pieces / 4 * 100) %>%"></span></div>
+              <small><%= dossier.nb_pieces %>/4 pièces</small>
+            </td>
             <td><span class="badge <%= stateClass(dossier.etat) %>"><%= dossier.etat %></span></td>
             <td>
               <div class="action-links">

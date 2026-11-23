@@ -1,0 +1,44 @@
+<%
+  const fileName = piece.nom_fichier || 'document.pdf';
+  const extension = String(fileName.split('.').pop() || 'pdf').toLowerCase();
+  const isImage = ['jpg', 'jpeg', 'png'].includes(extension);
+  const labelText = typeof label !== 'undefined' && label ? label : (types[piece.type] || piece.type || 'Document');
+  const isCompact = typeof compact !== 'undefined' && compact;
+%>
+<article class="doc-card <%= isCompact ? 'compact' : '' %>">
+  <div class="doc-preview <%= isImage ? 'image' : 'pdf' %>">
+    <div class="doc-sheet">
+      <span class="doc-sheet-fold"></span>
+      <span class="doc-sheet-line wide"></span>
+      <span class="doc-sheet-line"></span>
+      <span class="doc-sheet-line short"></span>
+      <span class="doc-sheet-line"></span>
+      <span class="doc-sheet-badge"><%= extension.toUpperCase() %></span>
+    </div>
+    <span class="doc-preview-label"><%- isImage ? icon('image') + ' IMAGE' : icon('file') + ' DOCUMENT' %></span>
+  </div>
+
+  <div class="doc-body">
+    <div class="doc-kicker">
+      <span class="doc-type"><%= labelText %></span>
+      <% if (typeof status !== 'undefined' && status) { %>
+        <span class="badge <%= stateClass(status) %>"><%= status %></span>
+      <% } %>
+    </div>
+    <h3 class="doc-name" title="<%= fileName %>"><%= fileName %></h3>
+    <div class="doc-meta">
+      <% if (dossierUrl) { %>
+        <a href="<%= dossierUrl %>"><%- icon('folder') %> Dossier #<%= piece.dossier_id %></a>
+      <% } else if (piece.dossier_id) { %>
+        <span><%- icon('folder') %> Dossier #<%= piece.dossier_id %></span>
+      <% } %>
+      <span><%- icon('clock') %> <%= formatDate(piece.created_at) %></span>
+      <% if (piece.taille) { %><span><%- icon('layers') %> <%= formatBytes(piece.taille) %></span><% } %>
+    </div>
+  </div>
+
+  <div class="doc-actions">
+    <a class="doc-open" href="<%= downloadUrl %>" title="Ouvrir le document"><%- icon('eye') %></a>
+    <a class="btn btn-primary" href="<%= downloadUrl %>"><%- icon('download') %> <%= isCompact ? '' : 'Télécharger' %></a>
+  </div>
+</article>

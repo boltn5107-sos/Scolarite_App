@@ -26,7 +26,10 @@ const ICONS = {
   arrow: '<path d="M9 18 15 12 9 6"/>',
   lock: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
   bell: '<path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>',
-  school: '<path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="M5 10v6c0 2 3 4 7 4s7-2 7-4v-6"/>'
+  school: '<path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="M5 10v6c0 2 3 4 7 4s7-2 7-4v-6"/>',
+  image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5L5 20"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="m3 13 9 5 9-5"/>'
 };
 
 function icon(name, className = '') {

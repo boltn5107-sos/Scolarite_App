@@ -7,31 +7,34 @@
   <div class="page-heading">
     <div>
       <h1 class="page-title">Mes attestations d'inscription</h1>
-      <p class="page-subtitle">Disponibles uniquement pour les dossiers validés</p>
+      <p class="page-subtitle"><%= dossiers.length %> attestation<%= dossiers.length > 1 ? 's' : '' %> disponible<%= dossiers.length > 1 ? 's' : '' %> · dossiers validés uniquement</p>
     </div>
   </div>
 
-  <div class="table-card">
-    <table>
-      <thead>
-        <tr><th>Dossier</th><th>Année</th><th>Filière</th><th>Niveau</th><th>Validé le</th><th>Action</th></tr>
-      </thead>
-      <tbody>
-        <% if (!dossiers.length) { %>
-          <tr class="empty-row"><td colspan="6">Aucune attestation disponible pour le moment.</td></tr>
-        <% } %>
-        <% dossiers.forEach(function (dossier) { %>
-          <tr>
-            <td class="cell-title">#<%= dossier.id %></td>
-            <td><%= dossier.annee %></td>
-            <td><%= dossier.filiere %></td>
-            <td><%= dossier.niveau %></td>
-            <td><%= formatDate(dossier.updated_at) %></td>
-            <td><a class="btn btn-primary" href="/etudiant/dossier/<%= dossier.id %>/attestation"><%- icon('download') %> Télécharger</a></td>
-          </tr>
-        <% }); %>
-      </tbody>
-    </table>
+  <div class="doc-grid">
+    <% if (!dossiers.length) { %>
+      <div class="doc-empty">Aucune attestation disponible pour le moment.</div>
+    <% } %>
+    <% dossiers.forEach(function (dossier) { %>
+      <%
+        const document = {
+          id: dossier.id,
+          dossier_id: dossier.id,
+          nom_fichier: 'attestation-' + (dossier.numero_etudiant || dossier.id) + '.pdf',
+          type: 'attestation',
+          taille: null,
+          created_at: dossier.updated_at
+        };
+      %>
+      <%- include('../partials/document-card', {
+        piece: document,
+        types,
+        label: 'Attestation d’inscription',
+        status: dossier.etat,
+        dossierUrl: '/etudiant/dossier/' + dossier.id,
+        downloadUrl: '/etudiant/dossier/' + dossier.id + '/attestation'
+      }) %>
+    <% }); %>
   </div>
 </main>
 </body>

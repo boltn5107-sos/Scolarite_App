@@ -12,11 +12,28 @@
     <button class="btn btn-primary" type="button" data-open-modal="nouvelle-demande"><%- icon('plus') %> Nouvelle demande</button>
   </div>
 
+  <% const rate = function (value) { return total ? Math.round(value / total * 100) : 0; }; %>
   <div class="stat-grid">
-    <div class="stat-card"><div class="stat-value"><%= total %></div><div class="stat-label">Dossiers au total</div></div>
-    <div class="stat-card"><div class="stat-value"><%= stats['en attente'] %></div><div class="stat-label">En attente</div></div>
-    <div class="stat-card success"><div class="stat-value"><%= stats['validé'] %></div><div class="stat-label">Validés</div></div>
-    <div class="stat-card danger"><div class="stat-value"><%= stats['rejeté'] %></div><div class="stat-label">Rejetés</div></div>
+    <div class="stat-card">
+      <div class="stat-value"><%= total %></div>
+      <div class="stat-label">Dossiers au total</div>
+      <div class="mini-progress"><span style="width:100%"></span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value"><%= stats['en attente'] %></div>
+      <div class="stat-label">En attente · <%= rate(stats['en attente']) %>%</div>
+      <div class="mini-progress"><span style="width:<%= rate(stats['en attente']) %>%"></span></div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-value"><%= stats['validé'] %></div>
+      <div class="stat-label">Validés · <%= rate(stats['validé']) %>%</div>
+      <div class="mini-progress"><span style="width:<%= rate(stats['validé']) %>%"></span></div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-value"><%= stats['rejeté'] %></div>
+      <div class="stat-label">Rejetés · <%= rate(stats['rejeté']) %>%</div>
+      <div class="mini-progress"><span style="width:<%= rate(stats['rejeté']) %>%"></span></div>
+    </div>
   </div>
 
   <div class="page-heading">
@@ -32,7 +49,7 @@
           <th>Niveau</th>
           <th>Date de dépôt</th>
           <th>État</th>
-          <th>Pièces</th>
+          <th>Complétude</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -47,7 +64,10 @@
             <td><%= dossier.niveau %></td>
             <td><%= formatDate(dossier.created_at) %></td>
             <td><span class="badge <%= stateClass(dossier.etat) %>"><%= dossier.etat %></span></td>
-            <td><%= dossier.nb_pieces %></td>
+            <td>
+              <div class="table-progress"><span style="width:<%= Math.min(100, dossier.nb_pieces / 4 * 100) %>%"></span></div>
+              <small><%= dossier.nb_pieces %>/4 pièces</small>
+            </td>
             <td>
               <div class="action-links">
                 <a href="/etudiant/dossier/<%= dossier.id %>"><%- icon('eye') %> Ouvrir</a>

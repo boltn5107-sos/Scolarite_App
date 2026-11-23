@@ -6,43 +6,117 @@
   <div class="breadcrumb">Accueil / Administration / <strong>Statistiques</strong></div>
   <div class="page-heading">
     <div>
-      <h1 class="page-title">Statistiques simples</h1>
-      <p class="page-subtitle">Vue globale de la scolarité · <%= year %></p>
+      <h1 class="page-title">Pilotage de la scolarité</h1>
+      <p class="page-subtitle">Vue analytique globale · <%= year %> · environnement <%= environment %></p>
     </div>
+    <a class="btn btn-outline" href="/version"><%- icon('chart') %> État de la plateforme</a>
   </div>
 
   <div class="stat-grid">
-    <div class="stat-card"><div class="stat-value"><%= totals.etudiants %></div><div class="stat-label">Étudiants</div></div>
-    <div class="stat-card"><div class="stat-value"><%= totals.dossiers %></div><div class="stat-label">Dossiers</div></div>
-    <div class="stat-card"><div class="stat-value"><%= totals.pieces %></div><div class="stat-label">Pièces déposées</div></div>
-    <div class="stat-card"><div class="stat-value"><%= totals.agents %></div><div class="stat-label">Agents</div></div>
+    <div class="stat-card">
+      <div class="stat-card-top"><span class="stat-icon"><%- icon('users') %></span><span class="stat-chip">Inscrits</span></div>
+      <div class="stat-value"><%= totals.etudiants %></div>
+      <div class="stat-label">Étudiants</div>
+      <div class="mini-progress"><span style="width:100%"></span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top"><span class="stat-icon"><%- icon('folder') %></span><span class="stat-chip"><%= decidedRate %>% traités</span></div>
+      <div class="stat-value"><%= totals.dossiers %></div>
+      <div class="stat-label">Dossiers</div>
+      <div class="mini-progress"><span style="width:<%= decidedRate %>%"></span></div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-card-top"><span class="stat-icon"><%- icon('file') %></span><span class="stat-chip"><%= completionRate %>% complétude</span></div>
+      <div class="stat-value"><%= totals.pieces %></div>
+      <div class="stat-label">Pièces déposées</div>
+      <div class="mini-progress"><span style="width:<%= completionRate %>%"></span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-top"><span class="stat-icon"><%- icon('shield') %></span><span class="stat-chip">Équipe</span></div>
+      <div class="stat-value"><%= totals.agents %></div>
+      <div class="stat-label">Agents</div>
+      <div class="mini-progress"><span style="width:<%= Math.min(100, totals.agents * 25) %>%"></span></div>
+    </div>
+  </div>
+
+  <% const gradient = stateChart.map(function (slice) { return slice.color + ' ' + slice.start.toFixed(2) + '% ' + slice.end.toFixed(2) + '%'; }).join(', '); %>
+  <div class="chart-grid">
+    <section class="panel chart-panel">
+      <div class="panel-header">Répartition des dossiers</div>
+      <div class="panel-body chart-body">
+        <div class="donut" style="background:conic-gradient(<%= gradient %>)">
+          <div class="donut-hole">
+            <strong><%= validatedRate %>%</strong>
+            <span>validés</span>
+          </div>
+        </div>
+        <ul class="chart-legend">
+          <% stateChart.forEach(function (slice) { %>
+            <li>
+              <span class="legend-dot" style="background:<%= slice.color %>"></span>
+              <span class="legend-label"><%= slice.etat %></span>
+              <strong><%= slice.total %></strong>
+              <small><%= slice.percent %>%</small>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="panel-header">Indicateurs de performance</div>
+      <div class="panel-body gauge-grid">
+        <div class="gauge-item">
+          <div class="gauge" style="--value:<%= validatedRate %>;--gauge-color:#12b76a"><span><%= validatedRate %>%</span></div>
+          <strong>Dossiers validés</strong>
+          <small>sur l'ensemble des dossiers</small>
+        </div>
+        <div class="gauge-item">
+          <div class="gauge" style="--value:<%= decidedRate %>;--gauge-color:#08183a"><span><%= decidedRate %>%</span></div>
+          <strong>Dossiers décidés</strong>
+          <small>validés ou rejetés</small>
+        </div>
+        <div class="gauge-item">
+          <div class="gauge" style="--value:<%= completionRate %>;--gauge-color:#f2ba1d"><span><%= completionRate %>%</span></div>
+          <strong>Complétude moyenne</strong>
+          <small>4 pièces attendues par dossier</small>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div class="detail-grid">
-    <div class="panel">
+    <section class="panel">
       <div class="panel-header">Dossiers par filière</div>
       <div class="panel-body">
-        <% byFiliere.forEach(function (row) { %>
-          <div class="bar-row">
-            <span><%= row.filiere %></span>
-            <span class="bar-track"><span class="bar-fill" style="width:<%= Math.round(row.total / maxFiliere * 100) %>%"></span></span>
-            <strong><%= row.total %></strong>
-          </div>
-        <% }); %>
+        <div class="progress-list">
+          <% byFiliere.forEach(function (row) { %>
+            <% const percent = Math.round(row.total / maxFiliere * 100); %>
+            <div class="progress-row">
+              <div class="progress-top"><span><%= row.filiere %></span><strong><%= row.total %> dossiers</strong></div>
+              <div class="progress-track"><span class="progress-fill" style="width:<%= percent %>%"></span></div>
+              <span class="progress-value"><%= percent %>%</span>
+            </div>
+          <% }); %>
+        </div>
       </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header">Dossiers par état</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">Pièces par type</div>
       <div class="panel-body">
-        <% byState.forEach(function (row) { %>
-          <div class="bar-row" style="grid-template-columns:110px 1fr 40px">
-            <span><%= row.etat %></span>
-            <span class="bar-track"><span class="bar-fill" style="width:<%= Math.round(row.total / Math.max(1, totals.dossiers) * 100) %>%"></span></span>
-            <strong><%= row.total %></strong>
-          </div>
-        <% }); %>
+        <div class="progress-list compact">
+          <% byType.forEach(function (row) { %>
+            <% const percent = Math.round(row.total / maxType * 100); %>
+            <div class="progress-row">
+              <div class="progress-top"><span><%= typesPieces[row.type] || row.type %></span><strong><%= row.total %></strong></div>
+              <div class="progress-track alt"><span class="progress-fill teal" style="width:<%= percent %>%"></span></div>
+              <span class="progress-value"><%= percent %>%</span>
+            </div>
+          <% }); %>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
 
   <div class="tile-grid">

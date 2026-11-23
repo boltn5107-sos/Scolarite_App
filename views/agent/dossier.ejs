@@ -33,24 +33,30 @@
       </div>
 
       <div class="panel" style="margin-top:18px">
-        <div class="panel-header">Pièces justificatives (<%= pieces.length %>)</div>
-        <table>
-          <thead><tr><th>Type</th><th>Fichier</th><th>Taille</th><th>Dépôt</th><th>Action</th></tr></thead>
-          <tbody>
+        <div class="panel-header">Pièces justificatives (<%= pieces.length %>/4)</div>
+        <div class="panel-body">
+          <div class="progress-list">
+            <div class="progress-row">
+              <div class="progress-top"><span>Complétude du dossier</span><strong><%= Math.min(100, Math.round(pieces.length / 4 * 100)) %>%</strong></div>
+              <div class="progress-track"><span class="progress-fill" style="width:<%= Math.min(100, pieces.length / 4 * 100) %>%"></span></div>
+              <span class="progress-value"><%= pieces.length %> / 4 pièces attendues</span>
+            </div>
+          </div>
+          <div class="doc-grid" style="margin-top:18px">
             <% if (!pieces.length) { %>
-              <tr class="empty-row"><td colspan="5">Aucune pièce déposée.</td></tr>
+              <div class="doc-empty">Aucune pièce déposée.</div>
             <% } %>
             <% pieces.forEach(function (piece) { %>
-              <tr>
-                <td><%= types[piece.type] %></td>
-                <td class="cell-title"><%= piece.nom_fichier %></td>
-                <td><%= formatBytes(piece.taille) %></td>
-                <td><%= formatDate(piece.created_at) %></td>
-                <td><a class="action-links" href="/agent/pieces/<%= piece.id %>/download"><%- icon('eye') %> Ouvrir</a></td>
-              </tr>
+              <%- include('../partials/document-card', {
+                piece,
+                types,
+                compact: true,
+                dossierUrl: '/agent/dossiers/' + dossier.id,
+                downloadUrl: '/agent/pieces/' + piece.id + '/download'
+              }) %>
             <% }); %>
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
     </div>
 
