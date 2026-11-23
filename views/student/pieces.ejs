@@ -1,0 +1,39 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / <strong>Mes pièces</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Mes pièces justificatives</h1>
+      <p class="page-subtitle">PDF ou JPG · 5 Mo maximum par fichier</p>
+    </div>
+    <a class="btn btn-primary" href="/etudiant/piece/nouveau"><%- icon('plus') %> Déposer une pièce</a>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr><th>Type</th><th>Fichier</th><th>Dossier</th><th>Taille</th><th>Dépôt</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <% if (!pieces.length) { %>
+          <tr class="empty-row"><td colspan="6">Aucune pièce déposée. Utilisez le bouton « Déposer une pièce ».</td></tr>
+        <% } %>
+        <% pieces.forEach(function (piece) { %>
+          <tr>
+            <td><%= types[piece.type] %></td>
+            <td class="cell-title"><%= piece.nom_fichier %></td>
+            <td><a class="tile-link" href="/etudiant/dossier/<%= piece.dossier_id %>">#<%= piece.dossier_id %> · <%= piece.filiere %></a></td>
+            <td><%= formatBytes(piece.taille) %></td>
+            <td><%= formatDate(piece.created_at) %></td>
+            <td><a class="action-links" href="/etudiant/piece/<%= piece.id %>/download"><%- icon('eye') %> Ouvrir</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

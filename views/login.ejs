@@ -1,0 +1,36 @@
+<%- include('partials/head') %>
+<div class="auth-shell">
+  <aside class="auth-aside">
+    <span class="auth-badge">Université du Saloum</span>
+    <h1>Scolarité<br>Cloud Hybride</h1>
+    <p>Inscription, dépôt des pièces justificatives et suivi des dossiers. Le guichet continue de fonctionner même lors d'une coupure réseau.</p>
+  </aside>
+  <section class="auth-form">
+    <div class="auth-tabs">
+      <a class="auth-tab <%= profil === 'etudiant' ? 'active' : '' %>" href="/login?profil=etudiant">Étudiant</a>
+      <a class="auth-tab <%= profil === 'agent' ? 'active' : '' %>" href="/login?profil=agent">Agent / Admin</a>
+    </div>
+    <h2>Connexion</h2>
+    <p class="hint">Accédez à votre espace de gestion scolaire.</p>
+    <%- include('partials/flash') %>
+    <form method="post" action="/login">
+      <input type="hidden" name="profil" value="<%= profil %>">
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="identifiant"><%= profil === 'etudiant' ? 'Numéro étudiant ou e-mail' : "Identifiant ou e-mail" %></label>
+          <input id="identifiant" name="identifiant" type="text" autocomplete="username" required autofocus>
+        </div>
+        <div class="form-field">
+          <label for="password">Mot de passe</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Se connecter</button>
+      </div>
+    </form>
+    <div class="auth-footer">Pas encore de compte ? <a href="/register">Créer un compte étudiant</a></div>
+  </section>
+</div>
+</body>
+</html>

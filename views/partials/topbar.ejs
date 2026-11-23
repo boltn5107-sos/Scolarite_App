@@ -1,0 +1,22 @@
+<header class="topbar">
+  <div class="topbar-brand">
+    <span class="brand-mark"><%- icon('school') %></span>
+    <span>Université du Saloum</span>
+  </div>
+  <div class="topbar-actions">
+    <span class="trial">Environnement <strong><%= environment %></strong></span>
+    <span class="trial-dot">•</span>
+    <span class="trial"><%= vmName %></span>
+    <a class="topbar-cta" href="/version">v<%= appVersion %></a>
+    <div class="profile">
+      <span class="profile-avatar"><%= user.prenom.charAt(0) %><%= user.nom.charAt(0) %></span>
+      <span class="profile-text">
+        <strong><%= user.prenom %> <%= user.nom %></strong>
+        <small><%= user.role === 'etudiant' ? 'Étudiant' : user.role === 'admin' ? 'Administrateur' : 'Agent de scolarité' %></small>
+      </span>
+    </div>
+    <form method="post" action="/logout">
+      <button class="icon-button" type="submit" title="Déconnexion"><%- icon('logout') %></button>
+    </form>
+  </div>
+</header>

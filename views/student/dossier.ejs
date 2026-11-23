@@ -1,0 +1,87 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / Mes dossiers / <strong>Dossier <%= dossier.id %></strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Dossier n° <%= dossier.id %></h1>
+      <p class="page-subtitle">Déposé le <%= formatDate(dossier.created_at) %> · Année <%= dossier.annee %></p>
+    </div>
+    <button class="btn btn-primary" type="button" data-open-modal="depot-piece"><%- icon('plus') %> Déposer une pièce</button>
+  </div>
+
+  <div class="detail-grid">
+    <div>
+      <div class="panel">
+        <div class="status-banner">
+          <span>État actuel du dossier</span>
+          <span class="badge <%= stateClass(dossier.etat) %>"><%= dossier.etat %></span>
+        </div>
+        <div class="panel-body">
+          <dl class="definition">
+            <dt>Filière</dt><dd><%= dossier.filiere %></dd>
+            <dt>Niveau</dt><dd><%= dossier.niveau %></dd>
+            <dt>Année universitaire</dt><dd><%= dossier.annee %></dd>
+            <dt>Dernière mise à jour</dt><dd><%= formatDate(dossier.updated_at) %></dd>
+          </dl>
+          <% if (dossier.commentaire) { %>
+            <div class="commentaire"><strong>Commentaire de l'agent :</strong><br><%= dossier.commentaire %></div>
+          <% } %>
+          <% if (dossier.etat === 'validé') { %>
+            <div style="margin-top:18px">
+              <a class="btn btn-primary" href="/etudiant/dossier/<%= dossier.id %>/attestation"><%- icon('download') %> Télécharger mon attestation (PDF)</a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:18px">
+        <div class="panel-header">Pièces justificatives (<%= pieces.length %>)</div>
+        <table>
+          <thead><tr><th>Type</th><th>Fichier</th><th>Taille</th><th>Date de dépôt</th><th>Action</th></tr></thead>
+          <tbody>
+            <% if (!pieces.length) { %>
+              <tr class="empty-row"><td colspan="5">Aucune pièce déposée pour le moment.</td></tr>
+            <% } %>
+            <% pieces.forEach(function (piece) { %>
+              <tr>
+                <td><%= types[piece.type] %></td>
+                <td class="cell-title"><%= piece.nom_fichier %></td>
+                <td><%= formatBytes(piece.taille) %></td>
+                <td><%= formatDate(piece.created_at) %></td>
+                <td><a class="action-links" href="/etudiant/piece/<%= piece.id %>/download"><%- icon('eye') %> Ouvrir</a></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">Informations utiles</div>
+      <div class="panel-body">
+        <dl class="definition" style="grid-template-columns:1fr">
+          <dt>Pièces attendues</dt>
+          <dd>Copie de la carte d'identité, relevé de notes, photo et reçu de paiement.</dd>
+          <dt>Formats acceptés</dt>
+          <dd>PDF ou JPG, 5 Mo maximum par fichier.</dd>
+          <dt>Délai de traitement</dt>
+          <dd>Le guichet valide ou rejette votre dossier avec un commentaire.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/modal', {
+  id: 'depot-piece',
+  modalTitle: 'Déposer une pièce justificative',
+  formAction: '/etudiant/dossier/' + dossier.id + '/piece',
+  fields: 'piece-fields',
+  enctype: true,
+  values: {}
+}) %>
+</body>
+</html>

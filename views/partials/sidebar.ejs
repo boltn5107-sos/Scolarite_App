@@ -1,0 +1,28 @@
+<aside class="sidebar">
+  <div class="sidebar-user">
+    <span class="sidebar-avatar"><%= user.prenom.charAt(0) %><%= user.nom.charAt(0) %></span>
+    <span class="sidebar-user-text">
+      <strong><%= user.prenom %> <%= user.nom %></strong>
+      <small><%= user.identifiant %></small>
+    </span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-switch <%= path === '/version' ? 'active' : '' %>" href="/version"><%- icon('shield') %> État de la plateforme</a>
+    <% nav.forEach(function (section) { %>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title <%= section.tone %>"><%= section.label %></div>
+        <div class="sidebar-links <%= section.tone %>">
+          <% section.items.forEach(function (item) { %>
+            <a class="sidebar-link <%= item.active ? 'active' : '' %>" href="<%= item.href %>">
+              <%- icon(item.icon) %>
+              <span><%= item.label %></span>
+            </a>
+          <% }); %>
+        </div>
+      </div>
+    <% }); %>
+  </nav>
+
+  <div class="sidebar-footer"><%- icon('lock') %> Sessions en mémoire</div>
+</aside>

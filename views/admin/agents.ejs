@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Administration / <strong>Comptes agents</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Comptes des agents</h1>
+      <p class="page-subtitle">Créez et gérez les accès du guichet de la scolarité</p>
+    </div>
+    <button class="btn btn-primary" type="button" data-open-modal="nouvel-agent"><%- icon('plus') %> Ajouter un agent</button>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr><th>N°</th><th>Identifiant</th><th>Nom et prénom</th><th>E-mail</th><th>Rôle</th><th>Créé le</th></tr>
+      </thead>
+      <tbody>
+        <% agents.forEach(function (agent) { %>
+          <tr>
+            <td class="cell-title">#<%= agent.id %></td>
+            <td class="cell-title"><%= agent.username %></td>
+            <td><%= agent.prenom %> <%= agent.nom %></td>
+            <td><%= agent.email %></td>
+            <td><span class="badge <%= agent.role === 'admin' ? 'pending' : '' %>"><%= agent.role %></span></td>
+            <td><%= formatDate(agent.created_at) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include('../partials/modal', {
+  id: 'nouvel-agent',
+  modalTitle: 'Créer un compte agent',
+  formAction: '/admin/agents',
+  fields: 'agent-fields',
+  enctype: false,
+  values: {}
+}) %>
+</body>
+</html>

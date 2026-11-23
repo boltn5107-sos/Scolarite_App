@@ -1,0 +1,83 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / Dossiers / <strong>Dossier <%= dossier.id %></strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Traitement du dossier n° <%= dossier.id %></h1>
+      <p class="page-subtitle">Déposé le <%= formatDate(dossier.created_at) %> · Année <%= dossier.annee %></p>
+    </div>
+    <a class="btn btn-outline" href="/agent/dossiers"><%- icon('arrow') %> Retour à la liste</a>
+  </div>
+
+  <div class="detail-grid">
+    <div>
+      <div class="panel">
+        <div class="status-banner">
+          <span>État actuel</span>
+          <span class="badge <%= stateClass(dossier.etat) %>"><%= dossier.etat %></span>
+        </div>
+        <div class="panel-body">
+          <dl class="definition">
+            <dt>Étudiant</dt><dd><%= dossier.prenom %> <%= dossier.nom %></dd>
+            <dt>Numéro étudiant</dt><dd><%= dossier.numero_etudiant %></dd>
+            <dt>E-mail</dt><dd><%= dossier.email %></dd>
+            <dt>Filière / Niveau</dt><dd><%= dossier.filiere %> · <%= dossier.niveau %></dd>
+          </dl>
+          <% if (dossier.commentaire) { %>
+            <div class="commentaire"><strong>Commentaire existant :</strong><br><%= dossier.commentaire %></div>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:18px">
+        <div class="panel-header">Pièces justificatives (<%= pieces.length %>)</div>
+        <table>
+          <thead><tr><th>Type</th><th>Fichier</th><th>Taille</th><th>Dépôt</th><th>Action</th></tr></thead>
+          <tbody>
+            <% if (!pieces.length) { %>
+              <tr class="empty-row"><td colspan="5">Aucune pièce déposée.</td></tr>
+            <% } %>
+            <% pieces.forEach(function (piece) { %>
+              <tr>
+                <td><%= types[piece.type] %></td>
+                <td class="cell-title"><%= piece.nom_fichier %></td>
+                <td><%= formatBytes(piece.taille) %></td>
+                <td><%= formatDate(piece.created_at) %></td>
+                <td><a class="action-links" href="/agent/pieces/<%= piece.id %>/download"><%- icon('eye') %> Ouvrir</a></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">Valider ou rejeter</div>
+      <div class="panel-body">
+        <form method="post" action="/agent/dossiers/<%= dossier.id %>/decision">
+          <div class="form-grid" style="grid-template-columns:1fr;row-gap:18px">
+            <div class="form-field">
+              <label for="etat">Décision</label>
+              <select id="etat" name="etat" required>
+                <option value="validé" <%= dossier.etat === 'validé' ? 'selected' : '' %>>Valider le dossier</option>
+                <option value="rejeté" <%= dossier.etat === 'rejeté' ? 'selected' : '' %>>Rejeter le dossier</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="commentaire">Commentaire (obligatoire en cas de rejet)</label>
+              <textarea id="commentaire" name="commentaire" placeholder="Précisez la raison de votre décision"><%= dossier.commentaire || '' %></textarea>
+            </div>
+          </div>
+          <div class="form-actions" style="flex-direction:column">
+            <button class="btn btn-primary" type="submit"><%- icon('check') %> Enregistrer la décision</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

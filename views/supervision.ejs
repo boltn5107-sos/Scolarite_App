@@ -1,0 +1,62 @@
+<%- include('partials/head') %>
+<% if (user) { %>
+  <%- include('partials/topbar') %>
+  <%- include('partials/sidebar') %>
+  <main class="content">
+<% } else { %>
+  <div class="public-page">
+<% } %>
+    <div class="<%= user ? '' : 'public-card' %>">
+      <%- include('partials/flash') %>
+      <div class="breadcrumb">Accueil / <strong>État de la plateforme</strong></div>
+      <div class="page-heading">
+        <div>
+          <h1 class="page-title">État de la plateforme</h1>
+          <p class="page-subtitle">Instance qui répond · contrôle de la disponibilité</p>
+        </div>
+        <button class="btn btn-outline" type="button" onclick="window.location.reload()">Actualiser</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-value" style="font-size:24px"><%= info.version %></div><div class="stat-label">Version déployée</div></div>
+        <div class="stat-card"><div class="stat-value" style="font-size:22px"><%= info.vmName %></div><div class="stat-label">Nom de la VM</div></div>
+        <div class="stat-card <%= database === 'ok' ? 'success' : 'danger' %>">
+          <div class="stat-value" style="font-size:22px"><%= database === 'ok' ? 'OK' : 'KO' %></div>
+          <div class="stat-label">Base de données</div>
+        </div>
+        <div class="stat-card"><div class="stat-value" style="font-size:22px"><%= info.environment %></div><div class="stat-label">Environnement</div></div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="panel">
+          <div class="panel-header">Informations de l'instance</div>
+          <div class="panel-body">
+            <dl class="definition">
+              <dt>Version de l'application</dt><dd><%= info.version %></dd>
+              <dt>Nom de la VM</dt><dd><%= info.vmName %></dd>
+              <dt>Hôte système</dt><dd><%= info.hostname %></dd>
+              <dt>Node.js</dt><dd><%= info.node %></dd>
+              <dt>Port d'écoute</dt><dd><%= port %></dd>
+              <dt>Vérifié le</dt><dd><%= checkedAt %></dd>
+            </dl>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Supervision</div>
+          <div class="panel-body">
+            <dl class="definition" style="grid-template-columns:1fr">
+              <dt>État de la base</dt><dd><span class="badge <%= database === 'ok' ? 'success' : 'danger' %>"><%= database === 'ok' ? 'joignable' : 'indisponible' %></span></dd>
+              <dt>Endpoint santé</dt><dd><a class="tile-link" href="/health">/health <%- icon('arrow') %></a></dd>
+              <dt>Données brutes</dt><dd><a class="tile-link" href="/version?format=json">/version (JSON) <%- icon('arrow') %></a></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+<% if (user) { %>
+  </main>
+<% } else { %>
+  </div>
+<% } %>
+</body>
+</html>

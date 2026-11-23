@@ -1,0 +1,67 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Administration / <strong>Statistiques</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Statistiques simples</h1>
+      <p class="page-subtitle">Vue globale de la scolarité · <%= year %></p>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-value"><%= totals.etudiants %></div><div class="stat-label">Étudiants</div></div>
+    <div class="stat-card"><div class="stat-value"><%= totals.dossiers %></div><div class="stat-label">Dossiers</div></div>
+    <div class="stat-card"><div class="stat-value"><%= totals.pieces %></div><div class="stat-label">Pièces déposées</div></div>
+    <div class="stat-card"><div class="stat-value"><%= totals.agents %></div><div class="stat-label">Agents</div></div>
+  </div>
+
+  <div class="detail-grid">
+    <div class="panel">
+      <div class="panel-header">Dossiers par filière</div>
+      <div class="panel-body">
+        <% byFiliere.forEach(function (row) { %>
+          <div class="bar-row">
+            <span><%= row.filiere %></span>
+            <span class="bar-track"><span class="bar-fill" style="width:<%= Math.round(row.total / maxFiliere * 100) %>%"></span></span>
+            <strong><%= row.total %></strong>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">Dossiers par état</div>
+      <div class="panel-body">
+        <% byState.forEach(function (row) { %>
+          <div class="bar-row" style="grid-template-columns:110px 1fr 40px">
+            <span><%= row.etat %></span>
+            <span class="bar-track"><span class="bar-fill" style="width:<%= Math.round(row.total / Math.max(1, totals.dossiers) * 100) %>%"></span></span>
+            <strong><%= row.total %></strong>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile-grid">
+    <div class="tile">
+      <span class="tile-icon"><%- icon('users') %></span>
+      <span class="tile-title">Comptes agents</span>
+      <a class="tile-link" href="/admin/agents">Gérer les accès <%- icon('arrow') %></a>
+    </div>
+    <div class="tile">
+      <span class="tile-icon"><%- icon('folder') %></span>
+      <span class="tile-title">Dossiers en attente</span>
+      <a class="tile-link" href="/agent/dossiers?etat=en%20attente">Traiter les dossiers <%- icon('arrow') %></a>
+    </div>
+    <div class="tile">
+      <span class="tile-icon"><%- icon('shield') %></span>
+      <span class="tile-title">Supervision</span>
+      <a class="tile-link" href="/health">Vérifier /health <%- icon('arrow') %></a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

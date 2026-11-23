@@ -1,0 +1,25 @@
+{
+  "name": "scolarite-cloud-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application Scolarité de l'Université du Saloum - Node.js, Express, EJS et MySQL 8",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:init": "node src/db-init.js",
+    "db:seed": "node src/seed.js",
+    "setup": "npm run db:init && npm run db:seed"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "mysql2": "^3.11.5",
+    "multer": "^2.0.2"
+  }
+}

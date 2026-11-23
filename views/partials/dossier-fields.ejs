@@ -1,0 +1,32 @@
+<div class="form-grid">
+  <div class="form-field">
+    <label for="filiere">Filière</label>
+    <select id="filiere" name="filiere" required>
+      <option value="">Sélectionner une filière</option>
+      <% filieres.forEach(function (item) { %>
+        <option value="<%= item %>" <%= values.filiere === item ? 'selected' : '' %>><%= item %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="form-field">
+    <label for="niveau">Niveau</label>
+    <select id="niveau" name="niveau" required>
+      <option value="">Sélectionner un niveau</option>
+      <% niveaux.forEach(function (item) { %>
+        <option value="<%= item %>" <%= values.niveau === item ? 'selected' : '' %>><%= item %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="form-field">
+    <label for="annee">Année universitaire</label>
+    <input id="annee" type="text" value="<%= year %>" disabled>
+  </div>
+  <div class="form-field">
+    <label for="etat">État initial</label>
+    <input id="etat" type="text" value="En attente" disabled>
+  </div>
+</div>
+<div class="form-actions">
+  <button class="btn btn-outline" type="reset">Réinitialiser</button>
+  <button class="btn btn-primary" type="submit">Enregistrer</button>
+</div>

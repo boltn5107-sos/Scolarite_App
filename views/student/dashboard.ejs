@@ -1,0 +1,93 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / <strong>Tableau de bord</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Tableau de bord</h1>
+      <p class="page-subtitle">Année universitaire <%= year %> · Suivi de vos demandes d'inscription</p>
+    </div>
+    <button class="btn btn-primary" type="button" data-open-modal="nouvelle-demande"><%- icon('plus') %> Nouvelle demande</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-value"><%= total %></div><div class="stat-label">Dossiers au total</div></div>
+    <div class="stat-card"><div class="stat-value"><%= stats['en attente'] %></div><div class="stat-label">En attente</div></div>
+    <div class="stat-card success"><div class="stat-value"><%= stats['validé'] %></div><div class="stat-label">Validés</div></div>
+    <div class="stat-card danger"><div class="stat-value"><%= stats['rejeté'] %></div><div class="stat-label">Rejetés</div></div>
+  </div>
+
+  <div class="page-heading">
+    <div><h2 class="page-title" style="font-size:16px">Mes demandes récentes</h2></div>
+    <a class="btn btn-link" href="/etudiant/dossiers">Voir tous mes dossiers <%- icon('arrow') %></a>
+  </div>
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>N° dossier</th>
+          <th>Filière</th>
+          <th>Niveau</th>
+          <th>Date de dépôt</th>
+          <th>État</th>
+          <th>Pièces</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!dossiers.length) { %>
+          <tr class="empty-row"><td colspan="7">Aucune demande. Cliquez sur « Nouvelle demande » pour commencer.</td></tr>
+        <% } %>
+        <% dossiers.forEach(function (dossier) { %>
+          <tr>
+            <td class="cell-title">#<%= dossier.id %></td>
+            <td><%= dossier.filiere %></td>
+            <td><%= dossier.niveau %></td>
+            <td><%= formatDate(dossier.created_at) %></td>
+            <td><span class="badge <%= stateClass(dossier.etat) %>"><%= dossier.etat %></span></td>
+            <td><%= dossier.nb_pieces %></td>
+            <td>
+              <div class="action-links">
+                <a href="/etudiant/dossier/<%= dossier.id %>"><%- icon('eye') %> Ouvrir</a>
+                <% if (dossier.etat === 'validé') { %>
+                  <a href="/etudiant/dossier/<%= dossier.id %>/attestation"><%- icon('download') %> Attestation</a>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tile-grid">
+    <div class="tile">
+      <span class="tile-icon"><%- icon('upload') %></span>
+      <span class="tile-title">Déposer une pièce</span>
+      <a class="tile-link" href="/etudiant/piece/nouveau">Déposer une pièce <%- icon('arrow') %></a>
+    </div>
+    <div class="tile">
+      <span class="tile-icon"><%- icon('folder') %></span>
+      <span class="tile-title">Suivre mon dossier</span>
+      <a class="tile-link" href="/etudiant/dossiers">Voir le suivi <%- icon('arrow') %></a>
+    </div>
+    <div class="tile">
+      <span class="tile-icon"><%- icon('file') %></span>
+      <span class="tile-title">Attestation d'inscription</span>
+      <a class="tile-link" href="/etudiant/attestations">Disponible après validation <%- icon('arrow') %></a>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/modal', {
+  id: 'nouvelle-demande',
+  modalTitle: 'Nouvelle demande d’inscription',
+  formAction: '/etudiant/dossier',
+  fields: 'dossier-fields',
+  enctype: false,
+  values: { filiere: '', niveau: '' }
+}) %>
+</body>
+</html>

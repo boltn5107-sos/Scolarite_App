@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / <strong>Nouvelle demande</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Nouvelle demande d'inscription</h1>
+      <p class="page-subtitle">Année universitaire <%= year %></p>
+    </div>
+  </div>
+  <div class="form-page">
+    <section class="form-panel">
+      <div class="form-panel-header">
+        <h2>Informations de la demande</h2>
+        <button class="modal-close" type="button" onclick="history.back()" aria-label="Retour"><%- icon('close') %></button>
+      </div>
+      <div class="form-panel-body">
+        <form method="post" action="/etudiant/dossier">
+          <%- include('../partials/dossier-fields', { values: values }) %>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

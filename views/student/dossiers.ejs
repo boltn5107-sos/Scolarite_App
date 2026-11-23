@@ -1,0 +1,85 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / <strong>Mes dossiers</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Mes dossiers</h1>
+      <p class="page-subtitle">Suivi complet de vos demandes d'inscription</p>
+    </div>
+    <button class="btn btn-primary" type="button" data-open-modal="nouvelle-demande"><%- icon('plus') %> Nouvelle demande</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-value"><%= Object.values(stats).reduce(function (a, b) { return a + Number(b); }, 0) %></div><div class="stat-label">Dossiers</div></div>
+    <div class="stat-card"><div class="stat-value"><%= stats['en attente'] %></div><div class="stat-label">En attente</div></div>
+    <div class="stat-card success"><div class="stat-value"><%= stats['validé'] %></div><div class="stat-label">Validés</div></div>
+    <div class="stat-card danger"><div class="stat-value"><%= stats['rejeté'] %></div><div class="stat-label">Rejetés</div></div>
+  </div>
+
+  <form class="toolbar" method="get" action="/etudiant/dossiers" data-auto-submit>
+    <div class="toolbar-field">
+      <span>Filière</span>
+      <select name="filiere">
+        <option value="">Toutes les filières</option>
+        <% filieres.forEach(function (item) { %>
+          <option value="<%= item %>" <%= filters.filiere === item ? 'selected' : '' %>><%= item %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="toolbar-field">
+      <span>État</span>
+      <select name="etat">
+        <option value="">Tous les états</option>
+        <% etats.forEach(function (item) { %>
+          <option value="<%= item %>" <%= filters.etat === item ? 'selected' : '' %>><%= item %></option>
+        <% }); %>
+      </select>
+    </div>
+    <button class="btn btn-outline" type="submit">Filtrer</button>
+  </form>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr><th>N°</th><th>Filière</th><th>Niveau</th><th>Dépôt</th><th>Pièces</th><th>État</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% if (!dossiers.length) { %>
+          <tr class="empty-row"><td colspan="7">Aucun dossier ne correspond à ces filtres.</td></tr>
+        <% } %>
+        <% dossiers.forEach(function (dossier) { %>
+          <tr>
+            <td class="cell-title">#<%= dossier.id %></td>
+            <td><%= dossier.filiere %></td>
+            <td><%= dossier.niveau %></td>
+            <td><%= formatDate(dossier.created_at) %></td>
+            <td><%= dossier.nb_pieces %></td>
+            <td><span class="badge <%= stateClass(dossier.etat) %>"><%= dossier.etat %></span></td>
+            <td>
+              <div class="action-links">
+                <a href="/etudiant/dossier/<%= dossier.id %>"><%- icon('eye') %> Ouvrir</a>
+                <% if (dossier.etat === 'validé') { %>
+                  <a href="/etudiant/dossier/<%= dossier.id %>/attestation"><%- icon('download') %> Attestation</a>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include('../partials/modal', {
+  id: 'nouvelle-demande',
+  modalTitle: 'Nouvelle demande d’inscription',
+  formAction: '/etudiant/dossier',
+  fields: 'dossier-fields',
+  enctype: false,
+  values: { filiere: '', niveau: '' }
+}) %>
+</body>
+</html>

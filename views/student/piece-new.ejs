@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / Mes pièces / <strong>Nouveau dépôt</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Déposer une pièce justificative</h1>
+      <p class="page-subtitle">PDF ou JPG · 5 Mo maximum par fichier</p>
+    </div>
+    <a class="btn btn-outline" href="/etudiant/pieces"><%- icon('arrow') %> Retour à mes pièces</a>
+  </div>
+
+  <div class="form-page">
+    <section class="form-panel">
+      <div class="form-panel-header"><h2>Informations de la pièce</h2></div>
+      <div class="form-panel-body">
+        <form method="post" action="/etudiant/piece/nouveau" enctype="multipart/form-data">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="dossier_id">Dossier concerné</label>
+              <select id="dossier_id" name="dossier_id" required>
+                <option value="">Sélectionner un dossier</option>
+                <% dossiers.forEach(function (dossier) { %>
+                  <option value="<%= dossier.id %>">#<%= dossier.id %> · <%= dossier.filiere %> · <%= dossier.niveau %> · <%= dossier.etat %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="type">Type de pièce</label>
+              <select id="type" name="type" required>
+                <% Object.keys(types).forEach(function (key) { %>
+                  <option value="<%= key %>"><%= types[key] %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="form-field" style="grid-column:1 / -1">
+              <label for="fichier">Fichier (PDF ou JPG, 5 Mo maximum)</label>
+              <input id="fichier" name="fichier" type="file" accept="application/pdf,image/jpeg" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <a class="btn btn-outline" href="/etudiant/pieces">Annuler</a>
+            <button class="btn btn-primary" type="submit">Déposer la pièce</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

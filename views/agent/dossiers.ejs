@@ -1,0 +1,82 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / <strong>Dossiers</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Liste des dossiers</h1>
+      <p class="page-subtitle">Année universitaire <%= year %></p>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-value"><%= Object.values(stats).reduce(function (a, b) { return a + Number(b); }, 0) %></div><div class="stat-label">Dossiers</div></div>
+    <div class="stat-card"><div class="stat-value"><%= stats['en attente'] %></div><div class="stat-label">En attente</div></div>
+    <div class="stat-card success"><div class="stat-value"><%= stats['validé'] %></div><div class="stat-label">Validés</div></div>
+    <div class="stat-card danger"><div class="stat-value"><%= stats['rejeté'] %></div><div class="stat-label">Rejetés</div></div>
+  </div>
+
+  <form class="toolbar" method="get" action="/agent/dossiers" data-auto-submit>
+    <div class="toolbar-field">
+      <span>Filière</span>
+      <select name="filiere">
+        <option value="">Toutes les filières</option>
+        <% filieres.forEach(function (item) { %>
+          <option value="<%= item %>" <%= filters.filiere === item ? 'selected' : '' %>><%= item %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="toolbar-field">
+      <span>État</span>
+      <select name="etat">
+        <option value="">Tous les états</option>
+        <% etats.forEach(function (item) { %>
+          <option value="<%= item %>" <%= filters.etat === item ? 'selected' : '' %>><%= item %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="search-field">
+      <%- icon('search') %>
+      <input type="text" name="q" value="<%= filters.q %>" placeholder="Rechercher un étudiant">
+    </div>
+    <button class="btn btn-outline" type="submit">Filtrer</button>
+  </form>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Étudiant</th>
+          <th>Filière</th>
+          <th>Niveau</th>
+          <th>Dépôt</th>
+          <th>Pièces</th>
+          <th>État</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!dossiers.length) { %>
+          <tr class="empty-row"><td colspan="8">Aucun dossier ne correspond aux filtres sélectionnés.</td></tr>
+        <% } %>
+        <% dossiers.forEach(function (dossier) { %>
+          <tr>
+            <td class="cell-title">#<%= dossier.id %></td>
+            <td><span class="cell-title"><%= dossier.prenom %> <%= dossier.nom %></span><span class="cell-sub"><%= dossier.numero_etudiant %></span></td>
+            <td><%= dossier.filiere %></td>
+            <td><%= dossier.niveau %></td>
+            <td><%= formatDate(dossier.created_at) %></td>
+            <td><%= dossier.nb_pieces %></td>
+            <td><span class="badge <%= stateClass(dossier.etat) %>"><%= dossier.etat %></span></td>
+            <td><div class="action-links"><a href="/agent/dossiers/<%= dossier.id %>"><%- icon('eye') %> Ouvrir</a></div></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

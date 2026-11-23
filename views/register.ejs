@@ -1,0 +1,61 @@
+<%- include('partials/head') %>
+<div class="auth-shell">
+  <aside class="auth-aside">
+    <span class="auth-badge">Nouveau dossier</span>
+    <h1>Rejoignez<br>l'Université du Saloum</h1>
+    <p>Créez votre compte, remplissez votre demande d'inscription puis déposez vos pièces justificatives au format PDF ou JPG.</p>
+  </aside>
+  <section class="auth-form">
+    <h2>Créer un compte</h2>
+    <p class="hint">Tous les champs sont obligatoires.</p>
+    <%- include('partials/flash') %>
+    <form method="post" action="/register">
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="numero_etudiant">Numéro étudiant</label>
+          <input id="numero_etudiant" name="numero_etudiant" type="text" value="<%= values.numero_etudiant || '' %>" placeholder="ETU20260001" required>
+        </div>
+        <div class="form-field">
+          <label for="email">Adresse e-mail</label>
+          <input id="email" name="email" type="email" value="<%= values.email || '' %>" required>
+        </div>
+        <div class="form-field">
+          <label for="nom">Nom</label>
+          <input id="nom" name="nom" type="text" value="<%= values.nom || '' %>" required>
+        </div>
+        <div class="form-field">
+          <label for="prenom">Prénom</label>
+          <input id="prenom" name="prenom" type="text" value="<%= values.prenom || '' %>" required>
+        </div>
+        <div class="form-field">
+          <label for="filiere">Filière</label>
+          <select id="filiere" name="filiere" required>
+            <option value="">Sélectionner une filière</option>
+            <% filieres.forEach(function (item) { %>
+              <option value="<%= item %>" <%= values.filiere === item ? 'selected' : '' %>><%= item %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="niveau">Niveau</label>
+          <select id="niveau" name="niveau" required>
+            <option value="">Sélectionner un niveau</option>
+            <% niveaux.forEach(function (item) { %>
+              <option value="<%= item %>" <%= values.niveau === item ? 'selected' : '' %>><%= item %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="password">Mot de passe (8 caractères minimum)</label>
+          <input id="password" name="password" type="password" minlength="8" required>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Créer mon compte</button>
+      </div>
+    </form>
+    <div class="auth-footer">Déjà inscrit ? <a href="/login">Se connecter</a></div>
+  </section>
+</div>
+</body>
+</html>

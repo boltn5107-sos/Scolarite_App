@@ -1,0 +1,38 @@
+<%- include('../partials/head') %>
+<%- include('../partials/topbar') %>
+<%- include('../partials/sidebar') %>
+<main class="content">
+  <%- include('../partials/flash') %>
+  <div class="breadcrumb">Accueil / Scolarité / <strong>Attestations</strong></div>
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Mes attestations d'inscription</h1>
+      <p class="page-subtitle">Disponibles uniquement pour les dossiers validés</p>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr><th>Dossier</th><th>Année</th><th>Filière</th><th>Niveau</th><th>Validé le</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <% if (!dossiers.length) { %>
+          <tr class="empty-row"><td colspan="6">Aucune attestation disponible pour le moment.</td></tr>
+        <% } %>
+        <% dossiers.forEach(function (dossier) { %>
+          <tr>
+            <td class="cell-title">#<%= dossier.id %></td>
+            <td><%= dossier.annee %></td>
+            <td><%= dossier.filiere %></td>
+            <td><%= dossier.niveau %></td>
+            <td><%= formatDate(dossier.updated_at) %></td>
+            <td><a class="btn btn-primary" href="/etudiant/dossier/<%= dossier.id %>/attestation"><%- icon('download') %> Télécharger</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

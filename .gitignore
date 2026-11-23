@@ -1,0 +1,5 @@
+node_modules/
+.env
+uploads/*
+!uploads/.gitkeep
+Projet_de_fin_de_Module_Cloud/

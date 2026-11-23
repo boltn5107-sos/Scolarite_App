@@ -1,0 +1,11 @@
+<div class="modal-overlay" id="<%= id %>">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <h2 class="modal-title"><%= modalTitle %></h2>
+      <button class="modal-close" type="button" data-close-modal aria-label="Fermer"><%- icon('close') %></button>
+    </div>
+    <form method="post" action="<%= formAction %>" <%= enctype ? 'enctype="multipart/form-data"' : '' %>>
+      <%- include(fields, { values: values || {} }) %>
+    </form>
+  </div>
+</div>
