@@ -3,7 +3,13 @@ const fs = require('node:fs/promises');
 const config = require('./config');
 const { pool } = require('./db');
 const { hashPassword } = require('./security');
-const { buildAttestation } = require('./pdf');
+const {
+  buildIdentityDocument,
+  buildTranscript,
+  buildReceipt,
+  buildPhoto,
+  buildCoverSheet
+} = require('./pdf');
 const { FILIERES, NIVEAUX, TYPES_PIECES } = require('./referentials');
 
 const NOMS = ['Diagne', 'Faye', 'Ndiaye', 'Sow', 'Mbaye', 'Fall', 'Sy', 'Gueye', 'Traore', 'Diallo', 'Bamba', 'Cisse'];
@@ -35,17 +41,35 @@ async function seed() {
   await pool.query('DELETE FROM dossiers');
   await pool.query('DELETE FROM agents');
   await pool.query('DELETE FROM etudiants');
+  await pool.query('ALTER TABLE pieces AUTO_INCREMENT = 1');
+  await pool.query('ALTER TABLE dossiers AUTO_INCREMENT = 1');
+  await pool.query('ALTER TABLE agents AUTO_INCREMENT = 1');
+  await pool.query('ALTER TABLE etudiants AUTO_INCREMENT = 1');
   await pool.query('SET FOREIGN_KEY_CHECKS = 1');
 
   await fs.mkdir(config.uploadDir, { recursive: true });
-  const sample = buildAttestation({
-    student: { numero_etudiant: 'ETU20250001', nom: 'Diagne', prenom: 'Aminata' },
-    dossier: { annee: config.year, filiere: FILIERES[0], niveau: NIVEAUX[0] },
-    version: config.version,
-    vmName: config.vmName,
-    date: new Date().toLocaleDateString('fr-FR')
-  });
-  await fs.writeFile(path.join(config.uploadDir, 'exemple-piece.pdf'), sample);
+  const date = new Date().toLocaleDateString('fr-FR');
+  const sampleStudent = { numero_etudiant: 'ETU20250001', nom: 'Diagne', prenom: 'Aminata' };
+  const sampleDossier = { id: 1, annee: config.year, filiere: FILIERES[0], niveau: NIVEAUX[0] };
+  const common = { student: sampleStudent, dossier: sampleDossier, version: config.version, vmName: config.vmName, date };
+
+  const templates = {
+    carte_identite: buildIdentityDocument(common),
+    releve_notes: buildTranscript(common),
+    photo: buildPhoto(common),
+    recu_paiement: buildReceipt(common),
+    cover: buildCoverSheet(common)
+  };
+
+  const files = {
+    'piece-exemple.pdf': templates.cover,
+    'exemple-piece.pdf': templates.cover,
+    'carte-identite-specimen.pdf': templates.carte_identite,
+    'releve-notes-specimen.pdf': templates.releve_notes,
+    'photo-identite-specimen.pdf': templates.photo,
+    'recu-paiement-specimen.pdf': templates.recu_paiement
+  };
+  await Promise.all(Object.entries(files).map(([name, buffer]) => fs.writeFile(path.join(config.uploadDir, name), buffer)));
 
   const students = [];
   for (let index = 1; index <= 500; index += 1) {
@@ -91,15 +115,23 @@ async function seed() {
   const [rows] = await pool.query('SELECT id FROM dossiers ORDER BY id');
   const pieces = [];
   const types = Object.keys(TYPES_PIECES);
+  const pieceFiles = {
+    carte_identite: { name: 'carte-identite-specimen.pdf', buffer: templates.carte_identite },
+    releve_notes: { name: 'releve-notes-specimen.pdf', buffer: templates.releve_notes },
+    photo: { name: 'photo-identite-specimen.pdf', buffer: templates.photo },
+    recu_paiement: { name: 'recu-paiement-specimen.pdf', buffer: templates.recu_paiement }
+  };
   rows.forEach((dossier, index) => {
     const count = 1 + Math.floor(next() * 2);
     for (let pieceIndex = 0; pieceIndex < count; pieceIndex += 1) {
+      const type = types[(index + pieceIndex) % types.length];
+      const file = pieceFiles[type];
       pieces.push([
         dossier.id,
-        types[(index + pieceIndex) % types.length],
-        'piece-exemple.pdf',
-        'exemple-piece.pdf',
-        sample.length,
+        type,
+        file.name,
+        file.name,
+        file.buffer.length,
         'application/pdf'
       ]);
     }
